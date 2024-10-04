@@ -1,18 +1,52 @@
 <template>
 
     <div v-if="postDatas.length > 0">
-        <!-- Arama inputları -->
-        <div style="margin-bottom: 16px;">
-            <a-input v-model="search.platform_name" placeholder="Search platform name"
-                style="width: 200px; margin-right: 8px;" @input="handleFilter" />
-            <a-input v-model="search.username" placeholder="Search username" style="width: 200px; margin-right: 8px;"
-                @input="handleFilter" />
-            <a-input v-model="search.post_content" placeholder="Search post content"
-                style="width: 200px; margin-right: 8px;" @input="handleFilter" />
-        </div>
-        <!-- Tablonun kendisi -->
-        <a-table :data-source="filteredData" :columns="columns" :rowKey="record => record.id"
-            :scroll="{ x: 720, y: 530 }" />
+        <a-table :data-source="postDatas" :columns="columns" :rowKey="record => record.id" :scroll="{ x: 720, y: 530 }">
+            <template #headerCell="{ column }">
+                <template v-if="column.key === 'platform_name'">
+                    <span style="color: #1890ff">platform_name</span>
+                </template>
+            </template>
+     
+           
+            <template #bodyCell="{ text, column }">
+                <span v-if="state.searchText && state.searchedColumn === column?.dataIndex">
+                    <template v-for="(fragment, i) in text
+                        .toString()
+                        .split(new RegExp(`(?<=${state.searchText})|(?=${state.searchText})`, 'i'))">
+                        <mark v-if="fragment.toLowerCase() === state.searchText.toLowerCase()" :key="i"
+                            class="highlight">
+                            {{ fragment }}
+                        </mark>
+                        <template v-else>{{ fragment }}</template>
+                    </template>
+                </span>
+            </template>
+
+
+            <template #customFilterDropdown="{ setSelectedKeys, selectedKeys, confirm, clearFilters, column }">
+                <div style="padding: 8px">
+                    <a-input ref="searchInput" :placeholder="`Search ${column.dataIndex}`" :value="selectedKeys[0]"
+                        style="width: 188px; margin-bottom: 8px; display: block"
+                        @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
+                        @pressEnter="handleSearch(selectedKeys, confirm, column.dataIndex)" />
+                    <a-button type="primary" size="small" style="width: 90px; margin-right: 8px"
+                        @click="handleSearch(selectedKeys, confirm, column.dataIndex)">
+                        <template #icon>
+                            <SearchOutlined />
+                        </template>
+                        Search
+                    </a-button>
+                    <a-button size="small" style="width: 90px" @click="handleReset(clearFilters)">
+                        Reset
+                    </a-button>
+                </div>
+            </template>
+            <template #customFilterIcon="{ filtered }">
+                <search-outlined :style="{ color: filtered ? '#108ee9' : undefined }" />
+            </template>
+        </a-table>
+
     </div>
     <div v-else>
         No posts available
@@ -44,7 +78,6 @@ export default defineComponent({
             },
         ];
         const searchInput = ref();
-        
         const columns = [
             {
                 title: 'Platform name',
