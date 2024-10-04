@@ -72,5 +72,9 @@ yarn preview
 bun run preview
 ```
 
+Bu projede ant design , pinia ve nuxt3 kullanılarak geliştirilmiştir.
+proje linki :
+https://66ffbbee2443dcef27ce716c--roaring-longma-797b3e.netlify.app/
+
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
 # SocialMediaDashboard
