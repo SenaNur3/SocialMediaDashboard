@@ -24,8 +24,6 @@ export const useSocialMedia = defineStore("socialMedia", {
       try {
         const response = await fetch(url, options);
         const data = await response.json();
-
-        console.log("aa", data.data);
         this.post = data.data.map((post, index) => ({
           id: post.id || index + 1,
           platform_name: "Facebook",
