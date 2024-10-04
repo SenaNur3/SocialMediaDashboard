@@ -2,7 +2,7 @@
     <div>
         <div v-if="postDatas && postDatas.length > 0">
             <div class="post-wrapper">
-                <div v-for="(post, index) in postDatas" :key="index" class="post">
+                <div v-for="(post, index) in postDatas" :key="post.id" class="post">
                     <div><span>Platform name</span> : {{ post.username }}</div>
                     <div><span>Username</span> : {{ post.platform_name }}</div>
                     <div><span>Post content</span> : {{ post.post_content }}</div>
@@ -27,14 +27,9 @@ export default defineComponent({
     props: {
         postDatas: {
             type: Array,
-            required: true,
         },
     },
     setup(props) {
-
-        return {
-            postDatas: props.postDatas,
-        }
     }
 })
 </script>
@@ -66,6 +61,15 @@ export default defineComponent({
     border: 1px solid #ccc;
     border-radius: 8px;
     box-shadow: 5px 5px #ccc;
+    min-height: 280px; 
+    max-height: 280px; 
+    overflow: hidden; 
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    line-clamp: 3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;
 }
 
 span {

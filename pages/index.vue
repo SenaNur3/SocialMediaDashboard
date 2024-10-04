@@ -1,106 +1,48 @@
 <template>
     <div class="container">
         <div class="content-wrapper">
-            <Header @updateView="handleViewChange" />
+            <!-- Ensure the event handler is properly bound -->
+            <MyHeader @updateView="handleViewChange" />
 
             <div class="down-area">
                 <div v-if="listView">
-                    <ListView :postDatas="postDatas"/>
+                    <ListView :postDatas="postData" />
                 </div>
                 <div v-else>
-                    <GridView :postDatas="postDatas" />
+                    <GridView :postDatas="postData" />
                 </div>
             </div>
         </div>
     </div>
 </template>
 
-<script>
-import { defineComponent, ref } from 'vue'
-import Header from '../components/Header.vue'
-import ListView from '../components/ListView.vue'
-import GridView from '../components/GridView.vue'
-
-export default defineComponent({
-    name: 'CreateTask',
-    setup() {
-        const listView = ref(true)
-        const postDatas = ref([
-            {   
-                key: '1',
-                platform_name: "Twitter",
-                username: "kullanici1",
-                post_content: "Bugün hava çok güzel!",
-                post_date_time: "2024-10-02 10:30",
-                likes: 100,
-                comments: 25,
-                shares: 10
-            },
-            {
-                key: '2',
-                platform_name: "Facebook",
-                username: "kullanici2",
-                post_content: "Yeni bir projeye başladım.",
-                post_date_time: "2024-10-01 14:00",
-                likes: 150,
-                comments: 30,
-                shares: 20
-            },
-            {
-                key: '3',
-                platform_name: "Instagram",
-                username: "kullanici3",
-                post_content: "Harika bir manzara!",
-                post_date_time: "2024-09-30 16:45",
-                likes: 250,
-                comments: 40,
-                shares: 15
-            },
-            {
-                key: '4',
-                platform_name: "LinkedIn",
-                username: "kullanici4",
-                post_content: "İş dünyasında yeni fırsatlar.",
-                post_date_time: "2024-09-29 09:15",
-                likes: 80,
-                comments: 10,
-                shares: 5
-            },
-            {
-                key: '5',
-                platform_name: "YouTube",
-                username: "kullanici5",
-                post_content: "Yeni video yayında!",
-                post_date_time: "2024-09-28 18:00",
-                likes: 500,
-                comments: 60,
-                shares: 25
-            },
-            {
-                key: '6',
-                platform_name: "TikTok",
-                username: "kullanici6",
-                post_content: "Kısa ama eğlenceli bir video.",
-                post_date_time: "2024-09-27 21:30",
-                likes: 300,
-                comments: 50,
-                shares: 30
-            }
-        ])
+<script setup>
+import { ref, onMounted, watch } from 'vue';
+import MyHeader from '../components/MyHeader.vue';
+import ListView from '../components/ListView.vue';
+import GridView from '../components/GridView.vue';
+import { useSocialMedia } from '../store/socialMedia.js';
 
 
-        const handleViewChange = (viewType) => {
-            // Gelen viewType değerine göre listView'i güncelliyoruz
-            listView.value = viewType === 1;
-        }
+const listView = ref(true);
+const postData = ref([])
+const socialMediaStore = useSocialMedia();
 
-        return {
-            listView,
-            handleViewChange,
-            postDatas
-        }
-    },
+const handleViewChange = (viewType) => {
+    listView.value = viewType === 1;
+};
+
+onMounted(() => {
+    socialMediaStore.fetchPosts();
+});
+
+
+
+watch(socialMediaStore, (val) => {
+    console.log('val',val.post)
+    postData.value = val.post
 })
+
 </script>
 
 <style scoped>
